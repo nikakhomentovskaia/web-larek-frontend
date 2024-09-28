@@ -1,6 +1,6 @@
 import {IBasket, IOrder, IProduct, OrderForm, PaymentMethod} from "../types";
 import { IEvents } from "./base/events";
-/*класс для управления товаами, корзиной и заказами*/ 
+/*класс для управления товаpами, корзиной и заказами*/ 
 export class AppData {
     items: IProduct[] = [];
     preview: IProduct = null;
@@ -94,7 +94,7 @@ export class AppData {
         }
         this.formErrors = { ...errors };
         this.events.emit('formErrors:change', this.formErrors);
-        
+
         return Object.keys(errors).length === 0;
     }
 }

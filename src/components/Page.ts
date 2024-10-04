@@ -16,7 +16,7 @@ export class Page extends View<IPage> {
 
 	constructor(container: HTMLElement, events: IEvents) {
 	
-		super(events, container);
+		super(container, events);
 		
 		this._counter = this._queryElement('.header__basket-counter');
 		this._catalog = this._queryElement('.gallery');

@@ -16,7 +16,7 @@ export class Basket extends View<IBasketView> {
 
     constructor(events: EventEmitter) {
         
-        super(events, cloneTemplate(Basket.template));
+        super(cloneTemplate(Basket.template), events);
 
         this._list = this._getElement('.basket__list');
         this._total = this._getElement('.basket__price');

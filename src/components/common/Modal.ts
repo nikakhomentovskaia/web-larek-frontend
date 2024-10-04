@@ -11,7 +11,7 @@ export class Modal extends View<IModalData> {
     private _content: HTMLElement;
 
     constructor(events: IEvents, container: HTMLElement) {
-        super(events, container);
+        super(container, events);
 
         this._closeButton = ensureElement<HTMLButtonElement>('.modal__close', container);
         this._content = ensureElement<HTMLElement>('.modal__content', container);

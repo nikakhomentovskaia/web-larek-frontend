@@ -12,7 +12,7 @@ export class Form<T> extends View<IFormState> {
     protected _errors: HTMLElement;
 
     constructor(events: EventEmitter, protected container: HTMLFormElement) {
-        super(events, container);
+        super(container, events);
 
         this._submit = ensureElement<HTMLButtonElement>('button[type=submit', this.container);
         this._errors = ensureElement<HTMLElement>('.form__errors', this.container);

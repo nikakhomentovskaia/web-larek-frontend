@@ -31,7 +31,7 @@ export class Component<T> {
 }
 // Класс View, наследующий от компонента
 export class View<T> extends Component<T> {
-    constructor(protected readonly events: IEvents, container: HTMLElement) {
-        super(container);
-    }
+    constructor(container: HTMLElement, protected readonly events: IEvents) {
+		super(container);
+	}
 }

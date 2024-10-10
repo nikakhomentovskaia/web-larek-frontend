@@ -33,16 +33,15 @@ const orderForm = new Order(events, cloneTemplate(ensureElement<HTMLTemplateElem
 const contactsForm = new Contacts(events, cloneTemplate(ensureElement<HTMLTemplateElement>('#contacts')));
 // Обработчик отправки формы контактов
 const handleContactsSubmit = () => {
-    api.orderProducts(appData.order) 
+    api.orderProducts(appData.order)
         .then(result => {
             const success = new Success(cloneTemplate(ensureElement<HTMLTemplateElement>('#success')), {
                 onClick: () => {
                     modal.close();
-                    appData.clearBasket(); 
+                    appData.clearBasket();
                 }
             });
-            // Отображение сообщения об успехе
-            modal.render({ content: success.render(result) }); 
+            modal.render({ content: success.render(result) });
         })
         .catch(console.error);
 };
@@ -70,7 +69,7 @@ const handleOrderSubmit = () => {
 };
 // Обработчик готовности заказа
 const handleOrderReady = (order: IOrder) => {
-    contactsForm.valid = true; 
+    contactsForm.valid = true;
 };
 // Обработчик изменения данных в форме заказа
 const handleOrderChange = (data: { field: keyof OrderForm, value: string }) => {
@@ -83,7 +82,6 @@ const handleContactsChange = (data: { field: keyof OrderForm, value: string }) =
 // Обработчик изменения ошибок формы
 const handleFormErrorsChange = (errors: Partial<OrderForm>) => {
     const { payment, address, email, phone } = errors;
-    // Проверка на наличие ошибок в формах заказа и контактов
     orderForm.valid = !payment && !address;
     orderForm.errors = [payment, address].filter(Boolean).join('; ');
     contactsForm.errors = [email, phone].filter(Boolean).join('; ');
@@ -106,18 +104,17 @@ const handleCardSelect = (item: IProduct) => {
 };
 // Обработчик изменения списка товаров
 const handleItemChange = (items: IProduct[]) => {
-    // Генерация карточек товаров
     page.catalog = items.map(item => {
         const card = new Card(cloneTemplate(templates.catalog), {
             onClick: () => events.emit('card:select', item)
         });
-        return card.render(item);
+        // Используем Object.assign для гибкости обновления данных карточки
+        return card.render(Object.assign({}, item));
     });
 };
 // Обработчик изменения корзины
 const handleBasketChange = () => {
     page.counter = appData.basket.items.length;
-    // Обновление списка товаров в корзине
     basket.items = appData.basket.items.map(id => {
         const item = appData.items.find(product => product.id === id);
         const card = new Card(cloneTemplate(templates.basket), {
@@ -125,7 +122,6 @@ const handleBasketChange = () => {
         });
         return card.render(item);
     });
-    // Обновление общей стоимости корзины
     basket.total = appData.basket.total;
 };
 // Обработчик изменения предпросмотра товара
@@ -165,7 +161,10 @@ events.on('card:select', handleCardSelect);
 events.on('item:change', handleItemChange);
 events.on('basket:change', handleBasketChange);
 events.on('preview:change', handlePreviewChange);
-// Получение данных о продуктах из API
+// Получение данных о продуктах из API и генерация карточек
 api.getProductList()
-    .then(appData.setItems.bind(appData))
+    .then((products) => {
+        appData.setItems(products);
+        events.emit('item:change', products);
+    })
     .catch(console.error);

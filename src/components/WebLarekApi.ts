@@ -7,7 +7,6 @@ export interface IWebLarekAPI {
     getProductItem: (id: string) => Promise<IProduct>;
     orderProducts: (order: IOrder) => Promise<IOrderResult>;
 }
-
 // Класс WebLarekAPI, реализующий интерфейс IWebLarekAPI
 export class WebLarekAPI extends Api implements IWebLarekAPI {
     private readonly cdn: string;
@@ -26,7 +25,7 @@ export class WebLarekAPI extends Api implements IWebLarekAPI {
     // Метод для получения продукта по его ID
     async getProductItem(id: string): Promise<IProduct> {
         try {
-            const response = await this.get(`/product/${id}`);
+            const response = await this.get(`/${id}`);
             const data: IProduct = response as IProduct;
             return {
                 ...data,

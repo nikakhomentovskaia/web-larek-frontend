@@ -1,9 +1,9 @@
-import {IBasket, IOrder, IProduct, OrderForm, PaymentMethod} from "../types";
+import { IBasket, IOrder, IProduct, OrderForm, PaymentMethod } from "../types";
 import { IEvents } from "./base/events";
-/*класс для управления товаpами, корзиной и заказами*/ 
+/* класс для управления товарами, корзиной и заказами */
 export class AppData {
     items: IProduct[] = [];
-    preview: IProduct = null;
+    preview: IProduct | null = null;
     basket: IBasket = {
         items: [],
         total: 0
@@ -18,9 +18,7 @@ export class AppData {
     };
     formErrors: Partial<Record<keyof OrderForm, string>> = {};
 
-    constructor(protected events: IEvents) {
-
-    }
+    constructor(protected events: IEvents) {}
     // установка списка товаров
     setItems(items: IProduct[]) {
         this.items = [...items];
@@ -33,7 +31,7 @@ export class AppData {
     }
     // проверка, находится ли товар в корзине
     inBasket(item: IProduct): boolean {
-        return this.basket.items.some(id => id === item.id);
+        return this.basket.items.includes(item.id);
     }
     // добавление товара в корзину
     addToBasket(item: IProduct) {
@@ -42,20 +40,20 @@ export class AppData {
             items: [...this.basket.items, item.id],
             total: this.basket.total + item.price
         };
-        this.events.emit('bascet:change', this.basket);
+        this.events.emit('basket:change', this.basket);
     }
     // удаление товара из корзины
     removeFromBasket(item: IProduct) {
-        this.basket = {
-            ...this.basket,
-            items: this.basket.items.filter(id => id !== item.id),
-            total: this.basket.total - item.price
-        };
-        this.events.emit('basket:change', this.basket);
+        const itemIndex = this.basket.items.indexOf(item.id);
+        if (itemIndex !== -1) {
+            this.basket.items.splice(itemIndex, 1);
+            this.basket.total = Math.max(0, this.basket.total - item.price);
+            this.events.emit('basket:change', this.basket);
+        }
     }
     // очистка корзины
     clearBasket() {
-        this.basket = { items:[], total: 0 };
+        this.basket = { items: [], total: 0 };
         this.events.emit('basket:change', this.basket);
     }
     // установка метода оплаты

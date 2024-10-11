@@ -1,3 +1,17 @@
+/*
+Добрый день! Не могу отладить проблему со стилями. Какие действия были предприняты:
+
+- сборка через npm start проходит на моем компьютере успешно и без ошибок в консоли (скрин '../screen')
+- стили открываются в любом моем браузере (скрин '../screen')
+- путь к файлу стилей указан верно в index.ts
+- webpack настроен верно
+- в самом файле стилей ошибок не нашла
+- конфликтов стилей не обнаружила
+- в консоле разрабортчика в браузере не увидела ошибок, связанных со стилем
+
+Из моих предположений решения проблемы - возможно очистить кэш в браузере.. но у меня больше нет идей:(
+*/
+
 import './scss/styles.scss';
 
 import { API_URL, CDN_URL } from './utils/constants';
@@ -14,8 +28,7 @@ import { Success } from './components/common/Success';
 import { Contacts } from './components/Contacts';
 import { Order } from './components/Order';
 import { Page } from './components/Page';
-
-// Инициализация API для взаимодействия с сервером
+// инициализация API для взаимодействия с сервером
 const api = new WebLarekAPI(CDN_URL, API_URL);
 
 // Шаблоны для карточек каталога, корзины и предпросмотра
@@ -36,17 +49,21 @@ const basket = new Basket(events);
 const orderForm = new Order(events, cloneTemplate(ensureElement<HTMLTemplateElement>('#order')));
 const contactsForm = new Contacts(events, cloneTemplate(ensureElement<HTMLTemplateElement>('#contacts')));
 
+// Инициализация компонента Success
+const success = new Success(cloneTemplate(ensureElement<HTMLTemplateElement>('#success')), {
+    onClick: () => {
+        modal.close();
+    }
+});
+
 // Обработчик отправки формы контактов
 const handleContactsSubmit = () => {
     api.orderProducts(appData.order)
         .then(result => {
-            const success = new Success(cloneTemplate(ensureElement<HTMLTemplateElement>('#success')), {
-                onClick: () => {
-                    modal.close();
-                    appData.clearBasket();
-                }
-            });
             modal.render({ content: success.render(result) });
+            appData.clearBasket();
+            
+            saveBasketToAPI();
         })
         .catch(console.error);
 };
